@@ -1,0 +1,33 @@
+Model SysADLModel ; 
+package SysADL.types { 
+	value type Int { } 
+	value type Boolean { } 
+	value type String { } 
+	value type Void { } 
+	value type Real { }
+} Requirement SVBCRequisitos ( 0 ) { text = "O sistema deve satisfazer requisitos funcionais e nao-funcionais." 
+	Requirement AutomatizarVendaDeComidasEBebidasFR ( 1 ) { text = "O sistema deve ser capaz de automatizar servicos de vendas de comidas e bebidas." 
+		Requirement AutenticarEntradaFR ( 2 ) { text = "Deve ser controlada a entrada e saida de clientes com cartao RFID." 
+			
+		} Requirement ComprareRecarregarCreditosFR ( 3 ) { text = "Deve ser possivel comprar e recarregar creditos do cartao em quiosques." } 
+		Requirement PagarProdutoFR ( 4 ) { text = "Clientes devem conseguir pagar pelos produtos com o cartao nas maquinas de venda automatica." 
+			Requirement CobrarDeMaquinaFR ( 9 ) { text = "As maquinas de venda automatica devem debitar creditos com base em valores pre-estabelecidos para cada produto." } 
+			Requirement CobrarDeTorneiraFR ( 10 ) { text = "As torneiras de bebidas devem calcular o valor a ser cobrado com base em quantos ml foram consumidos." }
+		} Requirement PedirSobDemandaFR ( 5 ) { text = "Realizar pedido em quiosque/máquina com cartão." 
+		} Requirement FecharContaFR ( 6 ) { text = "Cliente deve ser capaz de quitar o saldo pendente." } 
+		Requirement GerenciarSistemaFR ( 7 ) { text = "Deve ser possivel gerenciar os diferentes componentes do sistema." 
+			Requirement GerenciarCatalogoePrecosFR ( 13 ) { text = "Deve ser possivel controlar o catalogo de produtos oferecidos, assim como seus precos." } 
+			Requirement MonitorarDispositivosFR ( 14 ) { text = "Deve ser possivel monitorar os dispositivos do sistema." } 
+			Requirement GerenciarEstoqueFR ( 15 ) { text = "Deve ser possivel gerenciar a quantidade de cada produto no estoque." } 
+			Requirement GerenciarUsuariosFR ( 16 ) { text = "Deve ser possivel gerenciar os usuarios do sistema." } 
+			Requirement GerarRelatoriosFR ( 18 ) { text = "Deve ser possivel gerar relatorios para auditorias." } 
+			Requirement ArmazenarDespesasFR ( 17 ) { text = "Deve ser possivel armazenar as despesas dos clientes." }
+		}
+	} Requirement QualidadeseRestricoesNFR ( 19 ) { text = "O sistema deve satisfazer requisitos de disponibilidade, privacidade, seguranca e escalabilidade."   
+	Requirement SegurancaNFR ( 27 ) { text = "O sistema deve ter boa seguranca e garantir privacidade das operacoes e dados." Requirement RedePrivadaNFR ( 20 ) { text = "O sistema deve ter uma rede privada para a comunicacao dos processos de autenticacao e pagamento." } } Requirement DisponibilidadeNFR ( 28 ) { text = "O sistema deve possuir boa disponibilidade e tolerância a falhas." Requirement ModoOfflineNFR ( 26 ) { text = "O sistema deve possuir um modo de operacao offline para a realizacao de operações críticas na borda, para permitir vendas temporariamente quando o backend central estiver inacessível.\n" } } Requirement ConfiabilidadeNFR ( 29 ) { text = "O sistema deve ser confiavel." Requirement ConsistenciaDeDebitosNFR ( 22 ) { text = "O sistema deve ser capaz de manter a consistencia dos debitos de credito, evitando double-spend." } Requirement ConformidadePCIDSS_NFR ( 25 ) { text = "O sistema deve seguir o padrão PCI DSS (Payment Card Industry Data Security Standard), para lidar com cartoes de credito." } } }
+}
+Requirement RepassarPedidoParaCozinha ( 11 ) { text = "Pedidos devem aparecer na fila da cozinha." derive SVBCRequisitos.AutomatizarVendaDeComidasEBebidasFR.PedirSobDemandaFR ; } 
+Requirement RetirarPedidoFR ( 12 ) { text = "Cliente deve poder retirar pedido mediante apresentação do cartao." derive SVBCRequisitos.AutomatizarVendaDeComidasEBebidasFR.PedirSobDemandaFR ; }
+Requirement EmitirTokensFR ( 8 ) { text = "Devem ser emitidos tokens associados aos cartoes para seu controle no sistema." derive SVBCRequisitos.AutomatizarVendaDeComidasEBebidasFR.AutenticarEntradaFR ; }
+Requirement ProtocolosIoT_NFR ( 23 ) { text = "O sistema deve utilizar protocolos IoT leves e seguros." derive SVBCRequisitos.QualidadeseRestricoesNFR.SegurancaNFR.RedePrivadaNFR ; } 
+Requirement SincronizacaoComBackendNFR ( 24 ) { text = "O sistema deve permitir a sincronizacao com o backend central apos a operacao em modo offline." derive SVBCRequisitos.QualidadeseRestricoesNFR.DisponibilidadeNFR.ModoOfflineNFR ; }
