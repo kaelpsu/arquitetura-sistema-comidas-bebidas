@@ -5,7 +5,7 @@ package SysADL.types {
 	value type String { } 
 	value type Void { } 
 	value type Real { }
-} Requirement SVBCRequisitos ( 0 ) { text = "O sistema deve satisfazer requisitos funcionais e nao-funcionais." 
+dimension Moeda dimension Volume enum StatusPagamento { PENDENTE , CONFIRMADO , REJEITADO } enum StatusPedido { NOVO , EM_PREPARACAO , PRONTO , COLETADO , CANCELADO } unit BRL { dimension = Moeda } unit Mililitro { dimension = Volume } value type Preco { unit = BRL dimension = Moeda } value type Quantidade { } datatype TokenSessao { } datatype RequisicaoPagamento { } datatype RespostaPagamento { } datatype Pedido { } datatype Telemetria { } datatype PedidoItem { } unit Litro { dimension = Volume } enum AtivacaoAtuador { PERMITIDA , NEGADA } enum ComandoAcesso { Entrar , Sair } } Requirement SVBCRequisitos ( 0 ) { text = "O sistema deve satisfazer requisitos funcionais e nao-funcionais." 
 	Requirement AutomatizarVendaDeComidasEBebidasFR ( 1 ) { text = "O sistema deve ser capaz de automatizar servicos de vendas de comidas e bebidas." 
 		Requirement AutenticarEntradaFR ( 2 ) { text = "Deve ser controlada a entrada e saida de clientes com cartao RFID." 
 			
@@ -30,4 +30,20 @@ Requirement RepassarPedidoParaCozinha ( 11 ) { text = "Pedidos devem aparecer na
 Requirement RetirarPedidoFR ( 12 ) { text = "Cliente deve poder retirar pedido mediante apresentação do cartao." derive SVBCRequisitos.AutomatizarVendaDeComidasEBebidasFR.PedirSobDemandaFR ; }
 Requirement EmitirTokensFR ( 8 ) { text = "Devem ser emitidos tokens associados aos cartoes para seu controle no sistema." derive SVBCRequisitos.AutomatizarVendaDeComidasEBebidasFR.AutenticarEntradaFR ; }
 Requirement ProtocolosIoT_NFR ( 23 ) { text = "O sistema deve utilizar protocolos IoT leves e seguros." derive SVBCRequisitos.QualidadeseRestricoesNFR.SegurancaNFR.RedePrivadaNFR ; } 
-Requirement SincronizacaoComBackendNFR ( 24 ) { text = "O sistema deve permitir a sincronizacao com o backend central apos a operacao em modo offline." derive SVBCRequisitos.QualidadeseRestricoesNFR.DisponibilidadeNFR.ModoOfflineNFR ; }
+Requirement SincronizacaoComBackendNFR ( 24 ) { text = "O sistema deve permitir a sincronizacao com o backend central apos a operacao em modo offline." derive SVBCRequisitos.QualidadeseRestricoesNFR.DisponibilidadeNFR.ModoOfflineNFR ; } package SystemPorts { import SysADL.types ; port def LeitorCartaoOPT { flow out TokenSessao } port def AutenticacaoIPT { flow in String } port def AtuadorIPT { flow in AtivacaoAtuador } port def AutenticacaoOPT { flow out Boolean } port def LeitorCartaoIPT { flow in String } port def ComandoAcessoIPT { flow in ComandoAcesso } port def ComandoAcessoOPT { flow out ComandoAcesso } port def RequisicaoIOPT { flow in String } port def RespostaIOPT { flow out String } port def ClenteServidorCPT { ports : requisicao : RequisicaoIOPT ; resposta : RespostaIOPT ; } port def AtuadorOPT { flow out AtivacaoAtuador } } package SystemComponents { import SystemPorts ; import SysADL.types ; import SystemConnectors ;
+	component def TorneiraCP { }
+	component def CatracaCP { 
+		ports : rede : ClenteServidorCPT ;
+		configuration { components : b1 : BotaoFisicoCP { using ports : acesso1 : ComandoAcessoOPT ; } LeitorCartaoCP : LeitorCartaoCP { using ports :  saida : LeitorCartaoOPT ; } bracos : AtuadorCP { using ports : ativacao2 : AtuadorIPT ; } dispensadorCartao : AtuadorCP { using ports : ativacao1 : AtuadorIPT ; } ca1 : ControladorAcessoCP { using ports : acesso2 : ComandoAcessoIPT ; token : AutenticacaoIPT ; validado : AutenticacaoOPT ; controle1 : AtuadorOPT ; controle2 : AtuadorOPT ; requisicao : RequisicaoIOPT ; resposta : RespostaIOPT ; } connectors : autc1 : AutenticadorCartaoCN bindings saida = token ; aa1 : DecisaoAtuadorCN bindings controle1 = ativacao1 ; aa2 : DecisaoAtuadorCN bindings controle2 = ativacao2 ; acc1 : AcessoCatracaCN bindings acesso1 = acesso2 ; }
+	}
+	component def MaquinaDeLanchesCP { }
+	component def MaquinaDePedidosCP { }
+	component def QuiosqueCP { }
+	component def PontoDeColetaCP { }
+	component def PainelCozinhaCP { }
+	component def AtuadorCP { ports : ativacao : AtuadorIPT ; }
+	component def LeitorCartaoCP { ports :  saida : LeitorCartaoOPT ; }
+	component def TelaCP { }
+	component def BotaoFisicoCP { ports : acesso : ComandoAcessoOPT ; }
+	component def IHMCP { }
+	component def ControladorAcessoCP { ports : acesso : ComandoAcessoIPT ; token : AutenticacaoIPT ; validado : AutenticacaoOPT ; controle1 : AtuadorOPT ; controle2 : AtuadorOPT ; requisicao : RequisicaoIOPT ; resposta : RespostaIOPT ; } } package SystemConnectors { import SystemPorts ; connector def AutenticadorCartaoCN { participants : ~ fonte : LeitorCartaoOPT ; ~ destino : AutenticacaoIPT ; flows : String from fonte to destino } connector def DecisaoAtuadorCN { participants : ~ fonte : AtuadorOPT ; ~ destino : AtuadorIPT ; flows : AtivacaoAtuador from fonte to destino } connector def AcessoCatracaCN { participants : ~ fonte : ComandoAcessoOPT ; ~ destino : ComandoAcessoIPT ; flows : ComandoAcesso from fonte to destino } connector def RequisicaoRedeCN { participants : ~ fonte : RequisicaoIOPT ; ~ destino : RequisicaoIOPT ; flows : String from fonte to destino } connector def RespostaRedeCN { participants : ~ fonte : RespostaIOPT ; ~ destino : RespostaIOPT ; flows : String from fonte to destino } }
