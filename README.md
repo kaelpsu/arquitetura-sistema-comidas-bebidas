@@ -1,1 +1,1 @@
-# arquitetura-vendas-comes-bebes
+# Arquitetura de um sistema de comidas e bebidas
