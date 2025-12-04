@@ -20,9 +20,9 @@ dimension Moeda dimension Volume enum StatusPagamento { PENDENTE , CONFIRMADO , 
 			Requirement ArmazenarDespesasFR ( 17 ) { text = "Deve ser possivel armazenar as despesas dos clientes." satisfied by SystemComponents.BDUsuariosCP ; }
 		}
 	Requirement AdquirirProduto ( 9 ) { text = "Clientes devem ser capazes de adquirir produtos." 
-		Requirement PagarProdutoFR ( 4 ) { text = "Clientes devem conseguir pagar pelos produtos com o cartao nas maquinas de venda automatica." satisfied by SystemComponents.MaquinaDeLanchesCP , SystemComponents.MaquinaDeBebidasCP , SystemComponents.ControladorSaldo ; } Requirement PedirSobDemandaFR ( 5 ) { text = "Clientes devem conseguir realizar pedido a serem preparados pela cozinha" 
+		Requirement PagarProdutoFR ( 4 ) { text = "Clientes devem conseguir pagar pelos produtos com o cartao." satisfied by SystemComponents.ControladorSaldo ; } Requirement PedirSobDemandaFR ( 5 ) { text = "Clientes devem conseguir realizar pedido a serem preparados pela cozinha" 
 		satisfied by SystemComponents.MaquinaDePedidosCP ; } 
-	} } Requirement QualidadeseRestricoesNFR ( 19 ) { text = "O sistema deve satisfazer requisitos de escalabilidade e de seguranca."   
+	Requirement PedirProdutoMaquina ( 30 ) { text = "Os clientes devem ser capazes de adquirir os produtos nas máquinas usando seu cartão e saldo." satisfied by SystemComponents.MaquinaDeBebidasCP , SystemComponents.MaquinaDeLanchesCP ; } } } Requirement QualidadeseRestricoesNFR ( 19 ) { text = "O sistema deve satisfazer requisitos de escalabilidade e de seguranca."   
 	Requirement SegurancaNFR ( 27 ) { text = "O sistema deve ter boa seguranca e garantir privacidade das operacoes e dados." Requirement RedePrivadaNFR ( 20 ) { text = "O sistema deve ter uma rede privada para a comunicacao dos processos de autenticacao e pagamento." } Requirement DisponibilidadeNFR ( 28 ) { text = "O sistema deve possuir boa disponibilidade e tolerância a falhas."  }}  Requirement EscalabilidadeNFR ( 29 ) { text = "O sistema deve ser facilmente escalável." } }
 }
 Requirement RepassarPedidoParaCozinha ( 11 ) { text = "Pedidos devem aparecer na fila da cozinha." satisfied by SystemComponents.PainelCozinhaCP ; derive SVBCRequisitos.AutomatizarVendaDeComidasEBebidasFR.PedirSobDemandaFR , SVBCRequisitos.AutomatizarVendaDeComidasEBebidasFR.AdquirirProduto.PedirSobDemandaFR ; } 
